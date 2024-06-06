@@ -13,6 +13,14 @@ ASnakeElementBase::ASnakeElementBase()
 
 }
 
+
+
+
+
+void ASnakeElementBase::SetFirstElementType_Implementation()
+{
+}
+
 // Called when the game starts or when spawned
 void ASnakeElementBase::BeginPlay()
 {
