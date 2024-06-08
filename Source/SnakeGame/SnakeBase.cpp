@@ -3,6 +3,7 @@
 
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
+#include "Interactible.h"
 
 // Sets default values
 ASnakeBase::ASnakeBase()
@@ -37,10 +38,12 @@ void ASnakeBase::AddSnakeElement(int ElementsNum)
 		FVector NewLocation(GetActorLocation() - FVector(SnakeElements.Num() * ElementSize, 0, 0));
 		FTransform NewTransform = FTransform(NewLocation);
 		ASnakeElementBase* NewSnakeElem = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
+		NewSnakeElem->SnakeOwner = this;
 		int32 ElementIndex = SnakeElements.Add(NewSnakeElem);
 		if (ElementIndex == 0)
 		{
 			NewSnakeElem->SetFirstElementType();
+			
 		}
 	}
 	
@@ -49,23 +52,23 @@ void ASnakeBase::AddSnakeElement(int ElementsNum)
 void ASnakeBase::Move()
 {
 	FVector MovementVector(FVector::ZeroVector);
-	MovementSpeed = ElementSize;
 	switch (LastMoveDirection)
 	{
 	case EMovementDirection::UP:
-		MovementVector.X += MovementSpeed;
+		MovementVector.X += ElementSize;
 		break;
 	case EMovementDirection::DOWN:
-		MovementVector.X -= MovementSpeed;
+		MovementVector.X -= ElementSize;
 		break;
 	case EMovementDirection::LEFT:
-		MovementVector.Y += MovementSpeed;
+		MovementVector.Y += ElementSize;
 		break;
 	case EMovementDirection::RIGHT:
-		MovementVector.Y -= MovementSpeed;
+		MovementVector.Y -= ElementSize;
 		break;
 	}
 	AddActorWorldOffset(MovementVector);
+	SnakeElements[0]->ToggleCollision();
 
 	for (int i = SnakeElements.Num() - 1; i > 0; i--)
 	{
@@ -75,6 +78,23 @@ void ASnakeBase::Move()
 		CurrentElement->SetActorLocation(PrevLocation);
 	}
 	SnakeElements[0]->AddActorWorldOffset(MovementVector);
+	SnakeElements[0]->ToggleCollision();
+}
 
+void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other)
+{
+	if (IsValid(OverlappedElement))
+	{
+		int32 ElemIndex;
+		SnakeElements.Find(OverlappedElement, ElemIndex);
+		bool bIsFirst = ElemIndex == 0;
+		;
+		IInteractible* InteractibleInterface = Cast<IInteractible>(Other);
+		
+		if (InteractibleInterface)
+		{
+			InteractibleInterface->Interact(this, bIsFirst);
+		}
+	}
 }
 
