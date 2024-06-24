@@ -26,6 +26,7 @@ public:
 	UPROPERTY()
 	ASnakeBase* SnakeOwner;
 
+
 	
 
 protected:

@@ -4,14 +4,16 @@
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
 #include "Interactible.h"
+#include "Food.h"
+#include "LevelObjects.h"
 
 // Sets default values
 ASnakeBase::ASnakeBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	ElementSize = 100.f;
-	MovementSpeed = 10.f;
+	ElementSize = 10.f;
+	MovementSpeed = 0.6f;
 	LastMoveDirection = EMovementDirection::UP;
 }
 
@@ -21,6 +23,7 @@ void ASnakeBase::BeginPlay()
 	Super::BeginPlay();
 	SetActorTickInterval(MovementSpeed);
 	AddSnakeElement(4);
+	CanMove = true;
 	
 }
 
@@ -33,9 +36,17 @@ void ASnakeBase::Tick(float DeltaTime)
 
 void ASnakeBase::AddSnakeElement(int ElementsNum)
 {
+	FVector NewLocation;
 	for (int i = 0; i < ElementsNum; i++)
 	{
-		FVector NewLocation(GetActorLocation() - FVector(SnakeElements.Num() * ElementSize, 0, 0));
+		if (!SnakeElements.IsEmpty())
+		{
+			NewLocation = FVector(SnakeElements.Last()->GetActorLocation() - (SnakeElements.Last()->GetActorForwardVector() + SnakeElements.Last()->GetActorRightVector()).Normalize() * ElementSize);
+		}
+		else
+		{
+			NewLocation = GetActorLocation();
+		}
 		FTransform NewTransform = FTransform(NewLocation);
 		ASnakeElementBase* NewSnakeElem = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
 		NewSnakeElem->SnakeOwner = this;
@@ -43,14 +54,14 @@ void ASnakeBase::AddSnakeElement(int ElementsNum)
 		if (ElementIndex == 0)
 		{
 			NewSnakeElem->SetFirstElementType();
-			
-		}
+		} 
 	}
 	
 }
 
 void ASnakeBase::Move()
 {
+
 	FVector MovementVector(FVector::ZeroVector);
 	switch (LastMoveDirection)
 	{
@@ -68,7 +79,11 @@ void ASnakeBase::Move()
 		break;
 	}
 	AddActorWorldOffset(MovementVector);
+
+	
+	SnakeElements[0]->SetActorRotation(MovementVector.Rotation());
 	SnakeElements[0]->ToggleCollision();
+	CanMove = true;
 
 	for (int i = SnakeElements.Num() - 1; i > 0; i--)
 	{
@@ -88,7 +103,31 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActo
 		int32 ElemIndex;
 		SnakeElements.Find(OverlappedElement, ElemIndex);
 		bool bIsFirst = ElemIndex == 0;
-		;
+
+		if (Other->IsA(AFood::StaticClass()))
+		{
+				AFood* Food = Cast<AFood>(Other);
+				if (Food)
+				{
+					if (bIsFirst)
+					{
+						Food->Destroy();
+						OnFoodEat.Broadcast();
+						MovementSpeed = MovementSpeed * 0.99;
+						SetActorTickInterval(MovementSpeed);
+					}
+					else {
+						Food->Destroy();
+						OnFoodEat.Broadcast();
+					}
+				}
+		}
+
+		if (Other->IsA(ALevelObjects::StaticClass()))
+		{
+			Destroy();
+		}
+		
 		IInteractible* InteractibleInterface = Cast<IInteractible>(Other);
 		
 		if (InteractibleInterface)
@@ -96,5 +135,15 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActo
 			InteractibleInterface->Interact(this, bIsFirst);
 		}
 	}
+}
+
+TArray<FVector> ASnakeBase::GetSnakeElementsLocation()
+{
+	TArray<FVector> ElemLocation;
+	for (int i = SnakeElements.Num() - 1; i > 0; i--)
+	{
+		ElemLocation.Add(SnakeElements[i]->GetActorLocation());
+	}
+	return ElemLocation;
 }
 

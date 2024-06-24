@@ -11,6 +11,8 @@ class UCameraComponent;
 class ASnakeBase;
 class UInputMappingContext;
 class UInputAction;
+class ALevelObjects;
+class AFood;
 struct FInputActionValue;
 
 UCLASS()
@@ -25,6 +27,7 @@ public:
 	UPROPERTY(BluePrintReadWrite)
 	UCameraComponent* PawnCamera;
 
+
 	UPROPERTY(BlueprintReadWrite)
 	ASnakeBase* SnakeActor;
 
@@ -37,6 +40,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
+	UPROPERTY(BluePrintReadWrite)
+	AFood* Food;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AFood>  FoodClass;
+
+	UPROPERTY(BluePrintReadWrite)
+	ALevelObjects* Cube;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ALevelObjects>  CubeClass;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -48,6 +63,14 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void CreateFloorAndWalls();
 	void CreateSnakeActor();
 	void Move(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void SpawnFood();
+	UFUNCTION()
+	int GetRandomCoordinate(float Side, float Offset);
+	FVector FoodSpawnCoordinates(float Side, float Offset);
 };
+

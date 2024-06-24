@@ -4,39 +4,46 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interactible.h"
-#include "Food.generated.h"
+#include "LevelObjects.generated.h"
 
+
+class UStaticMeshComponent;
+class UStaticMesh;
 
 
 UCLASS()
-class SNAKEGAME_API AFood : public AActor, public IInteractible
+class SNAKEGAME_API ALevelObjects : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AFood();
+	ALevelObjects();
 
 
-	UStaticMeshComponent* Food;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+
+	UStaticMeshComponent* Cube;
 
 	UPROPERTY(VisibleAnywhere)
-	TSubclassOf<UStaticMeshComponent> FoodClass;
+	TSubclassOf<UStaticMeshComponent> CubeClass;
 
 	UPROPERTY()
-	UMaterial* FoodMaterial;
+	UMaterial* CubeMaterial;
 
 	UPROPERTY()
-	UStaticMesh* FoodMesh;
+	UStaticMesh* CubeMesh;
 
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void Interact(AActor* Interactor, bool bIsHead) override;
+
+
 };

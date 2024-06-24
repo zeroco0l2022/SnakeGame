@@ -6,6 +6,7 @@
 #include "SnakeBase.h"
 
 
+
 // Sets default values
 ASnakeElementBase::ASnakeElementBase()
 {
@@ -31,7 +32,7 @@ void ASnakeElementBase::Interact(AActor* Interactor, bool bIsHead)
 	if (IsValid(Snake))
 	{
 		Snake->Destroy();
-	}
+	}	
 }
 
 void ASnakeElementBase::HandleBeginOverlap(UPrimitiveComponent* OverlapedCoponent,
@@ -45,6 +46,7 @@ void ASnakeElementBase::HandleBeginOverlap(UPrimitiveComponent* OverlapedCoponen
 	{
 		SnakeOwner->SnakeElementOverlap(this, OtherActor);
 	}
+
 }
 
 void ASnakeElementBase::ToggleCollision()
@@ -63,6 +65,7 @@ void ASnakeElementBase::ToggleCollision()
 void ASnakeElementBase::BeginPlay()
 {
 	Super::BeginPlay();
+	//MeshComponent->SetRelativeRotation(FRotator(90, 0,0));
 }
 
 // Called every frame

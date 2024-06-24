@@ -9,6 +9,8 @@
 
 class ASnakeElementBase;
 
+
+
 UENUM()
 
 enum class EMovementDirection
@@ -18,6 +20,10 @@ enum class EMovementDirection
 	LEFT,
 	RIGHT
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FFoodEatDelegate);
+
+
 
 UCLASS()
 
@@ -38,13 +44,19 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed;
 
+
 	UPROPERTY()
 	TArray <ASnakeElementBase*> SnakeElements;
+
 
 	UPROPERTY()
 	EMovementDirection LastMoveDirection;
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FFoodEatDelegate OnFoodEat;
 
+	UPROPERTY()
+	bool CanMove;
 
 
 protected:
@@ -60,4 +72,7 @@ public:
 
 	UFUNCTION()
 	void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
+
+	UFUNCTION()
+	TArray <FVector> GetSnakeElementsLocation();
 };
