@@ -115,10 +115,7 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActo
 						OnFoodEat.Broadcast();
 						MovementSpeed = MovementSpeed * 0.99;
 						SetActorTickInterval(MovementSpeed);
-					}
-					else {
-						Food->Destroy();
-						OnFoodEat.Broadcast();
+						Points++;
 					}
 				}
 		}

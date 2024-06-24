@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed;
 
+	UPROPERTY(BlueprintReadOnly)
+	int Points = 0;
+
 
 	UPROPERTY()
 	TArray <ASnakeElementBase*> SnakeElements;
