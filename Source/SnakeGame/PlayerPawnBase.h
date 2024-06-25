@@ -52,6 +52,10 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ALevelObjects>  CubeClass;
 
+	UPROPERTY(BlueprintReadOnly)
+	int Points = 0;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -72,5 +76,9 @@ public:
 	UFUNCTION()
 	int GetRandomCoordinate(float Side, float Offset);
 	FVector FoodSpawnCoordinates(float Side, float Offset);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "ScoreSystem")
+	void AddPoints();
+	void AddPoints_Implementation();
 };
 

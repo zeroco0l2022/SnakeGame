@@ -81,7 +81,7 @@ void APlayerPawnBase::CreateSnakeActor()
 {
 	SnakeActor = GetWorld()->SpawnActor<ASnakeBase>(SnakeActorClass, FTransform());
 	if (SnakeActor) {
-		SnakeActor->OnFoodEat.AddDynamic(this, &APlayerPawnBase::SpawnFood);
+		SnakeActor->OnFoodEat.AddDynamic(this, &APlayerPawnBase::AddPoints);
 	}
 	
 }
@@ -132,7 +132,7 @@ int APlayerPawnBase::GetRandomCoordinate(float Side, float Offset)
 {
 	
 	float Delta = (2 * Side / Offset) ;
-	Delta = FMath::FRandRange(4, Delta);
+	Delta = FMath::FRandRange(2, Delta-2);
 	int32 RoundedDelta = FMath::RoundToInt(Delta);
 	if (RoundedDelta % 2 != 0) {
 		RoundedDelta = abs(RoundedDelta - 1) * (RoundedDelta / abs(RoundedDelta));
@@ -155,6 +155,12 @@ FVector APlayerPawnBase::FoodSpawnCoordinates(float Side, float Offset)
 		}
 	}
 	return SpawnCoordinates;
+}
+
+void APlayerPawnBase::AddPoints_Implementation()
+{
+	Points++;
+	SpawnFood();
 }
 
 

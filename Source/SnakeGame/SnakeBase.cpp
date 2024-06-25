@@ -113,9 +113,8 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActo
 					{
 						Food->Destroy();
 						OnFoodEat.Broadcast();
-						MovementSpeed = MovementSpeed * 0.99;
+						MovementSpeed = MovementSpeed * 0.98;
 						SetActorTickInterval(MovementSpeed);
-						Points++;
 					}
 				}
 		}
@@ -143,4 +142,6 @@ TArray<FVector> ASnakeBase::GetSnakeElementsLocation()
 	}
 	return ElemLocation;
 }
+
+
 

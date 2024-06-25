@@ -44,10 +44,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed;
 
-	UPROPERTY(BlueprintReadOnly)
-	int Points = 0;
-
-
 	UPROPERTY()
 	TArray <ASnakeElementBase*> SnakeElements;
 
@@ -60,7 +56,6 @@ public:
 
 	UPROPERTY()
 	bool CanMove;
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -78,4 +73,6 @@ public:
 
 	UFUNCTION()
 	TArray <FVector> GetSnakeElementsLocation();
+
+
 };
